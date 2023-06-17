@@ -9,42 +9,4 @@
 // This program only needs to handle arguments that satisfy
 // R0 >= 0, R1 >= 0, and R0*R1 < 32768.
 
-
-@R0
-D=M
-
-@R2
-M=0
-
-(LOOP)
-  @R1
-  D=M
-
-  @END
-  D;JEQ // check == 0
-
-  @END
-  D;JLT // check < 0
-
-  @R1
-  M=M-1
-
-  @R0
-  D=M
-
-  @R2
-  M=M+D
-
-  @LOOP
-  0;JMP
-
-
-//(mul_zero)
-//  @R2
-//  M=0
-//  @END
-//  0;JMP
-
-(END)
-  @END
-  0;JMP
+// Put your code here.

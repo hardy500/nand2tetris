@@ -39,5 +39,58 @@ CHIP CPU {
         pc[15];          // address of next instruction
 
     PARTS:
-    // Put your code here:
+
+    /* Is A-instruction? */
+    Not(in=instruction[15], out=AInst); 
+    Not(in=AInst, out=Cinst);          
+
+    /* Is C-instruction? */
+    And(a=Cinst, b=instruction[5], out=ALUtoA);
+
+    /* Which value should go to the A-Register? */
+    Mux16(a=instruction, b=ALUout, sel=ALUtoA, out=AregIn);
+
+    /* Load A, if A-instruction or ALU */
+    Or(a=AInst, b=ALUtoA, out=loadA);
+    ARegister(in=AregIn, load=loadA, out=Aout);
+
+    /* Select A or M depending o nthe 12-bit instruction value */
+    Mux16(a=Aout, b=inM, sel=instruction[12], out=AMout);
+
+    /* Decides whether the ALU output is loaded to the D-Reg */
+    And(a=Cinst, b=instruction[4], out=loadD);
+    DRegister(in=ALUout, load=loadD, out=Dout);
+
+    /* Do computations */
+    ALU(x=Dout, 
+        y=AMout, 
+        zx=instruction[11], 
+        nx=instruction[10], 
+        zy=instruction[9], 
+        ny=instruction[8],
+        f=instruction[7],
+        no=instruction[6],
+        out=ALUout,
+        zr=ZRout,
+        ng=NGout);
+
+    /* Decides whether the CPU can write on the data memory */
+    Or16(a=false, b=Aout, out[0..14]=addressM);
+    Or16(a=false, b=ALUout, out=outM);
+    And(a=Cinst, b=instruction[3], out=writeM);
+
+
+    /* next fetch */
+    And(a=ZRout, b=instruction[1], out=jeq);
+    And(a=NGout, b=instruction[2], out=jlt);
+    Or(a=ZRout, b=NGout, out=zeroOrNeg);
+    Not(in=zeroOrNeg, out=positive);
+    And(a=positive, b=instruction[0], out=jgt);
+    Or(a=jeq, b=jlt, out=jle);
+    Or(a=jle, b=jgt, out=jmpToA);
+    And(a=Cinst, b=jmpToA, out=PCload);
+    Not(in=PCload, out=PCinc);
+    PC(in=Aout, inc=PCinc, load=PCload, reset=reset, out[0..14]=pc);
+    
+
 }

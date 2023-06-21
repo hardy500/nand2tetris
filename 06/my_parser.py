@@ -4,6 +4,7 @@ class MyParser:
   prefix_c = "111"
 
   def __init__(self):
+    self.symtable = SymTable()
     # Init instructions
     self.cmp = {
       "0" : "0101010",
@@ -84,13 +85,13 @@ class MyParser:
       return self.cmp[cmp_inst]
 
   def dest_lookup(self, dest_inst: str) -> str:
-    if dest_inst not in self.cmp:
+    if dest_inst not in self.dest:
       return self.dest["null"]
     else:
       return self.dest[dest_inst]
 
   def jmp_lookup(self, jmp_inst: str) -> str:
-    if jmp_inst not in self.cmp:
+    if jmp_inst not in self.jmp:
       return self.jmp["null"]
     else:
       return self.jmp[jmp_inst]
@@ -107,7 +108,7 @@ class MyParser:
     else:
       if any(char.isdigit() for char in inst) and any(char.isalpha() for char in inst):
         raise RuntimeError("Invalid A-instruction: number first")
-      addr = SymTable.lookup(inst)
+      addr = self.symtable.lookup(inst)
       return self.prefix_a + format(addr, "015b")
 
   def parse_c_inst(self, inst: str) -> str:

@@ -4,19 +4,17 @@ from my_parser import MyParser
 from symboltable import SymbolTable
 
 def main():
-  #if len(sys.argv) > 2:
-  #  print(sys.argv)
-  #  print("Usage: assembly.py file.asm")
-  #  sys.exit()
-  #else:
-  #  arg = sys.argv[1]
+  if len(sys.argv) > 2:
+    print(sys.argv)
+    print("Usage: assembly.py file.asm")
+    sys.exit()
+  else:
+    arg = sys.argv[1]
 
-  arg = "max/MaxL.asm"
   filename = arg.split("/")[0]
   symtable = SymbolTable()
   parser = MyParser()
   queue1, queue2 = [], []
-
 
   with open(arg, "r") as f:
     for line in f:

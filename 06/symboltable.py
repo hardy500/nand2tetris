@@ -50,10 +50,3 @@ class SymbolTable:
   def lookup(self, var: str):
     self.add_var(var)
     return self.table.get(var)
-
-
-if __name__ == "__main__":
-  table = SymbolTable()
-  table.add_var("TOTO")
-  table.add_var("GEORGE")
-  print(table.var_counter)

@@ -40,7 +40,7 @@ def main():
     while queue2:
       line = queue2.pop(0)
       mac_code = parser.parse_inst(line)
-      print(line, "\t->\t", mac_code)
+      print(line, "\t->\t\t", mac_code)
 
       with open(filename+".hack", "a") as f:
         f.write(mac_code + "\n")

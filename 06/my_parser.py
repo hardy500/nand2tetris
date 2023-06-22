@@ -98,7 +98,7 @@ class MyParser:
 
   def parse_inst(self, inst:str) -> str:
     if '@' in inst:
-      return self.parse_a_inst(inst[1:]) # remove the @
+      return self.parse_a_inst(inst[1:]) # start at pos '@' + 1
     else:
       return self.parse_c_inst(inst)
 
@@ -107,9 +107,9 @@ class MyParser:
       return self.prefix_a + format(int(inst), '015b')
     else:
       if any(char.isdigit() for char in inst) and any(char.isalpha() for char in inst):
-        raise RuntimeError("Invalid A-instruction: number first")
+        raise RuntimeError("Invalid A-instruction")
       addr = self.symtable.lookup(inst)
-      return self.prefix_a + format(addr, "015b")
+      return self.prefix_a + format(int(addr), "015b")
 
   def parse_c_inst(self, inst: str) -> str:
     idxe = inst.find('=')
@@ -119,7 +119,4 @@ class MyParser:
     cmp_inst = inst[idxe + 1:idxsc] if idxsc != -1 else inst[idxe + 1:]
     jmp_inst = "null" if idxsc == -1 else inst[idxsc + 1:]
 
-    #dest_inst = "null" if idxe == -1 else inst[:idxe]
-    #cmp_inst = inst[idxe+1:idxsc] if idxsc != -1 else inst[idxe+1:]
-    #jmp_inst = "null" if idxsc == -1 else inst[idxsc+1:]
     return self.prefix_c + self.cmp_lookup(cmp_inst) + self.dest_lookup(dest_inst) + self.jmp_lookup(jmp_inst)
